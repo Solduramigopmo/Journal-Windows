@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="clear" xml:space="preserve">
+    <value>Очистить</value>
+  </data>
+  <data name="copy" xml:space="preserve">
+    <value>Копировать</value>
+  </data>
+  <data name="countall" xml:space="preserve">
+    <value>Количество записей:</value>
+  </data>
+  <data name="countdirectories" xml:space="preserve">
+    <value>Каталогов:</value>
+  </data>
+  <data name="countfiles" xml:space="preserve">
+    <value>Файлов:</value>
+  </data>
+  <data name="countfirst" xml:space="preserve">
+    <value>Самая старая запись:</value>
+  </data>
+  <data name="currentfile" xml:space="preserve">
+    <value>Текущий файл</value>
+  </data>
+  <data name="datagrid" xml:space="preserve">
+    <value>Таблица данных</value>
+  </data>
+  <data name="date" xml:space="preserve">
+    <value>Дата</value>
+  </data>
+  <data name="directory" xml:space="preserve">
+    <value>Каталог</value>
+  </data>
+  <data name="directorytree" xml:space="preserve">
+    <value>Дерево каталогов</value>
+  </data>
+  <data name="drive" xml:space="preserve">
+    <value>Диск</value>
+  </data>
+  <data name="enterdir" xml:space="preserve">
+    <value>Открыть каталог записи</value>
+  </data>
+  <data name="entryinfo" xml:space="preserve">
+    <value>Показать информацию о файле</value>
+  </data>
+  <data name="export" xml:space="preserve">
+    <value>Экспорт</value>
+  </data>
+  <data name="file" xml:space="preserve">
+    <value>Файл</value>
+  </data>
+  <data name="filedeleted" xml:space="preserve">
+    <value>Файл был удалён</value>
+  </data>
+  <data name="fileid" xml:space="preserve">
+    <value>Идентификатор файла</value>
+  </data>
+  <data name="format" xml:space="preserve">
+    <value>Формат</value>
+  </data>
+  <data name="formdrive" xml:space="preserve">
+    <value>Выбор диска</value>
+  </data>
+  <data name="formentryinfo" xml:space="preserve">
+    <value>Информация о записи</value>
+  </data>
+  <data name="info" xml:space="preserve">
+    <value>Информация</value>
+  </data>
+  <data name="language" xml:space="preserve">
+    <value>Язык</value>
+  </data>
+  <data name="layout" xml:space="preserve">
+    <value>Вид</value>
+  </data>
+  <data name="lordyzagatdesc" xml:space="preserve">
+    <value>Идея проекта, перевод причин</value>
+  </data>
+  <data name="name" xml:space="preserve">
+    <value>Имя</value>
+  </data>
+  <data name="nolandesc" xml:space="preserve">
+    <value>Обёртка OpenByFileId Win32 API для C#</value>
+  </data>
+  <data name="poneidesc" xml:space="preserve">
+    <value>Главный разработчик</value>
+  </data>
+  <data name="reason" xml:space="preserve">
+    <value>Причина</value>
+  </data>
+  <data name="root" xml:space="preserve">
+    <value>Корень</value>
+  </data>
+  <data name="scan" xml:space="preserve">
+    <value>Сканировать</value>
+  </data>
+  <data name="search" xml:space="preserve">
+    <value>Поиск</value>
+  </data>
+  <data name="select" xml:space="preserve">
+    <value>Выбрать</value>
+  </data>
+  <data name="skipperdesc" xml:space="preserve">
+    <value>Обёртка NTFS UsnJournal Win32 API для C#</value>
+  </data>
+  <data name="statusdesc-1" xml:space="preserve">
+    <value>Программа не смогла получить дескриптор выбранного диска для запроса текущего состояния журнала.</value>
+  </data>
+  <data name="statusdesc-2" xml:space="preserve">
+    <value>Программа не смогла запросить текущее состояние журнала. Убедитесь, что на выбранном диске включено журналирование.</value>
+  </data>
+  <data name="statusdesc-3" xml:space="preserve">
+    <value>Программа не смогла корректно вызвать DeviceIoControl для получения всех записей журнала на диске.</value>
+  </data>
+  <data name="statusdesc-4" xml:space="preserve">
+    <value>Программа не смогла корректно разрешить идентификаторы файлов. Что-то блокирует программу?</value>
+  </data>
+  <data name="statusdesc-5" xml:space="preserve">
+    <value>Программа не смогла корректно разобрать записи журнала. Возможно, это ошибка программы.</value>
+  </data>
+  <data name="statusdesc0" xml:space="preserve">
+    <value>Пожалуйста, выберите нужный диск и начните фильтрацию записей журнала.</value>
+  </data>
+  <data name="statusdesc1" xml:space="preserve">
+    <value>Для запроса журнала нужно убедиться, что мы можем создавать дескрипторы без проблем.</value>
+  </data>
+  <data name="statusdesc2" xml:space="preserve">
+    <value>Нужно запросить текущее состояние журнала для получения его значений.</value>
+  </data>
+  <data name="statusdesc3" xml:space="preserve">
+    <value>Вызов DeviceIoControl для получения всех записей текущего идентификатора журнала.</value>
+  </data>
+  <data name="statusdesc4" xml:space="preserve">
+    <value>Идентификаторы файлов не являются читаемыми путями, поэтому нужно разрешить все возможные.</value>
+  </data>
+  <data name="statusdesc5" xml:space="preserve">
+    <value>Преобразование всех записей журнала в классы, которые мы будем изменять и запрашивать позже.</value>
+  </data>
+  <data name="statusdesc6" xml:space="preserve">
+    <value>Выберите тип отображения для просмотра собранных данных. Каждый покажет данные по-разному.</value>
+  </data>
+  <data name="statusgrid0" xml:space="preserve">
+    <value>Преобразование записей журнала в строки...</value>
+  </data>
+  <data name="statusgrid1" xml:space="preserve">
+    <value>Добавление строк в элемент управления...</value>
+  </data>
+  <data name="statustitle-1" xml:space="preserve">
+    <value>Не удалось получить дескриптор тома.</value>
+  </data>
+  <data name="statustitle-2" xml:space="preserve">
+    <value>Не удалось получить текущее состояние журнала.</value>
+  </data>
+  <data name="statustitle-3" xml:space="preserve">
+    <value>Не удалось запросить записи журнала.</value>
+  </data>
+  <data name="statustitle-4" xml:space="preserve">
+    <value>Не удалось разрешить идентификаторы.</value>
+  </data>
+  <data name="statustitle-5" xml:space="preserve">
+    <value>Не удалось разобрать записи.</value>
+  </data>
+  <data name="statustitle0" xml:space="preserve">
+    <value>Ожидание ввода...</value>
+  </data>
+  <data name="statustitle1" xml:space="preserve">
+    <value>Получение дескриптора тома...</value>
+  </data>
+  <data name="statustitle2" xml:space="preserve">
+    <value>Получение текущего состояния журнала...</value>
+  </data>
+  <data name="statustitle3" xml:space="preserve">
+    <value>Запрос записей журнала...</value>
+  </data>
+  <data name="statustitle4" xml:space="preserve">
+    <value>Разрешение идентификаторов файлов...</value>
+  </data>
+  <data name="statustitle5" xml:space="preserve">
+    <value>Разбор записей...</value>
+  </data>
+  <data name="statustitle6" xml:space="preserve">
+    <value>Готово!</value>
+  </data>
+  <data name="totalfreespace" xml:space="preserve">
+    <value>Свободное место</value>
+  </data>
+  <data name="totalsize" xml:space="preserve">
+    <value>Общий размер</value>
+  </data>
+  <data name="type" xml:space="preserve">
+    <value>Тип</value>
+  </data>
+  <data name="usnreasons" xml:space="preserve">
+    <value>Перезапись данных,Расширение данных,Усечение данных,Перезапись именованных данных,Расширение именованных данных,Усечение именованных данных,Создание файла,Удаление файла,Изменение EA,Изменение безопасности,Переименование: старое имя,Переименование: новое имя,Изменение индексации,Изменение базовой информации,Изменение жёсткой ссылки,Изменение сжатия,Изменение шифрования,Изменение ID объекта,Изменение точки повторной обработки,Изменение потока,Закрытие</value>
+  </data>
+</root>
