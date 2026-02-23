@@ -29,12 +29,12 @@ namespace JournalTrace.Language
 
         public void UpdateControls()
         {
-            //contagem reversa pra nao ter problema de exception na hora do loop
+            // обратный отсчет чтобы не было проблем с исключениями во время цикла
             for (int i = controlList.Count - 1; i >= 0; i--)
             {
-                //checa se o controle já foi removido
-                //se já, tira da lista; nao tem motivo pra ficar atualizando
-                //pula a iteração do loop quando deletar
+                // проверяем был ли контрол уже удален
+                // если да, удаляем из списка; нет смысла продолжать обновлять
+                // пропускаем итерацию цикла при удалении
                 LocalizableControl temp = controlList[i];
                 switch (temp.ControlType)
                 {

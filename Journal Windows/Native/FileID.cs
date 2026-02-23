@@ -10,7 +10,9 @@ namespace JournalTrace.Native
     {
         private const FileAttributes _FILE_FLAG_BACKUP_SEMANTICS = (FileAttributes)0x02000000;
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Получает путь к файлу по его системному идентификатору
+        /// </summary>
 
         public static string GetFilePath(long fileSystemId)
         {
@@ -90,8 +92,8 @@ namespace JournalTrace.Native
             int cchFilePath,
             int dwFlags);
 
-        /// <exception cref="System.IO.FileNotFoundException"><paramref name="path" /> was not found.</exception>
-        /// <exception cref="System.IO.DirectoryNotFoundException"><paramref name="path" /> was not found.</exception>
+        /// <exception cref="System.IO.FileNotFoundException">Путь <paramref name="path" /> не найден.</exception>
+        /// <exception cref="System.IO.DirectoryNotFoundException">Путь <paramref name="path" /> не найден.</exception>
         private static BY_HANDLE_FILE_INFORMATION _Get_File_Information(string path)
         {
             using (var handle = _CreateSafeFileHandle(path))
@@ -146,7 +148,7 @@ namespace JournalTrace.Native
         public Guid ObjectId;
 
         [FieldOffset(8)]
-        public Guid ExtendedFileId; //Use for ReFS; need to use v3 structures or later instead of v2 as done in this sample
+        public Guid ExtendedFileId; // Используется для ReFS; необходимо использовать структуры v3 или новее вместо v2 как в этом примере
     }
 
     internal struct BY_HANDLE_FILE_INFORMATION

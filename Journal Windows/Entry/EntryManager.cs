@@ -44,14 +44,14 @@ namespace JournalTrace.Entry
             this.selectedVolume = newVolume;
         }
 
-        //used for datagrid cell selection
+        // используется для выбора ячейки в datagrid
         public long SelectedUSN;
 
 
 
 
 
-        //used for getting the oldest usn date, shows on main form
+        // используется для получения самой старой даты usn, отображается на главной форме
         public long OldestUSN;
 
         public Win32Api.USN_JOURNAL_DATA usnCurrentJournalState;
@@ -59,13 +59,13 @@ namespace JournalTrace.Entry
 
         public void BeginScan()
         {
-            //clear
+            // очистка
             parentFileReferenceIdentifiers.Clear();
             USNEntries.Clear();
             USNDirectories.Clear();
 
             usnCurrentJournalState = new Win32Api.USN_JOURNAL_DATA();
-            //1 phase; handle
+            // 1 фаза; получение дескриптора
             try
             {
                 usnJournal = new NtfsUsnJournal(selectedVolume);
@@ -77,7 +77,7 @@ namespace JournalTrace.Entry
                 return;
             }
 
-            //2 phase; current state
+            // 2 фаза; текущее состояние
             Win32Api.USN_JOURNAL_DATA journalState = new Win32Api.USN_JOURNAL_DATA();
             NtfsUsnJournal.UsnJournalReturnCode rtn = usnJournal.GetUsnJournalState(ref journalState);
             if (rtn == NtfsUsnJournal.UsnJournalReturnCode.USN_JOURNAL_SUCCESS)
@@ -91,7 +91,7 @@ namespace JournalTrace.Entry
                 return;
             }
 
-            //3 phase; query
+            // 3 фаза; запрос
             uint reasonMask = Win32Api.USN_REASON_DATA_OVERWRITE |
                     Win32Api.USN_REASON_DATA_EXTEND |
                     Win32Api.USN_REASON_NAMED_DATA_OVERWRITE |
@@ -119,11 +119,11 @@ namespace JournalTrace.Entry
             {
                 OnEntryAmountUpdate(true);
 
-                //4 phase
+                // 4 фаза
                 ResolveIdentifiers(usnEntries);
                 OnEntryAmountUpdate(true);
 
-                //5 phase
+                // 5 фаза
                 AddEntries(usnEntries);
                 OnEntryAmountUpdate(true);
 
@@ -136,9 +136,9 @@ namespace JournalTrace.Entry
             }
         }
 
-        public IDictionary<long, USNEntry> USNEntries = new Dictionary<long, USNEntry>(); //usn
-        public IDictionary<ulong, USNCollection> USNDirectories = new Dictionary<ulong, USNCollection>(); //parentfilereference
-        public IDictionary<ulong, USNCollection> USNFiles = new Dictionary<ulong, USNCollection>(); //filereference
+        public IDictionary<long, USNEntry> USNEntries = new Dictionary<long, USNEntry>(); // usn
+        public IDictionary<ulong, USNCollection> USNDirectories = new Dictionary<ulong, USNCollection>(); // ссылка на родительский файл
+        public IDictionary<ulong, USNCollection> USNFiles = new Dictionary<ulong, USNCollection>(); // ссылка на файл
 
         private void AddEntries(List<Win32Api.UsnEntry> usnEntries)
         {
@@ -147,7 +147,7 @@ namespace JournalTrace.Entry
                 ulong parentFileReference = entry.ParentFileReferenceNumber;
                 ulong fileReference = entry.FileReferenceNumber;
                 USNEntries.Add(entry.USN, new USNEntry(entry.USN, entry.Name, entry.FileReferenceNumber, entry.ParentFileReferenceNumber, entry.TimeStamp, entry.Reason));
-                //diretorios
+                // директории
                 if (!USNDirectories.TryGetValue(parentFileReference, out USNCollection foundDir))
                 {
                     USNDirectories.Add(parentFileReference, new USNCollection(parentFileReference, entry.USN));
@@ -156,7 +156,7 @@ namespace JournalTrace.Entry
                 {
                     foundDir.USNList.Add(entry.USN);
                 }
-                //arquivos
+                // файлы
                 if (!USNFiles.TryGetValue(fileReference, out USNCollection foundFile))
                 {
                     USNFiles.Add(fileReference, new USNCollection(fileReference, entry.USN));
@@ -175,7 +175,7 @@ namespace JournalTrace.Entry
                 entry.Value.ResolveInfo(usnReasonsList);
             }
 
-            //MessageBox.Show("c");
+            // MessageBox.Show("c");
         }
 
         public IDictionary<ulong, ResolvableIdentifier> parentFileReferenceIdentifiers = new Dictionary<ulong, ResolvableIdentifier>();
@@ -183,9 +183,9 @@ namespace JournalTrace.Entry
 
         private void ResolveIdentifiers(List<Win32Api.UsnEntry> usnEntries)
         {
-            //coloca todos os ids de diretorios parentes em um hashset
-            //hashset não aceita itens duplicados e é mais rápido que usar uma lista normal
-            //o resultado é uma lista com ids unicos
+            // помещаем все id родительских директорий в hashset
+            // hashset не принимает дубликаты и работает быстрее обычного списка
+            // результат - список с уникальными id
             HashSet<ulong> fileReference = new HashSet<ulong>(), parentFileReference = new HashSet<ulong>();
 
             foreach (var entry in usnEntries)
@@ -196,13 +196,13 @@ namespace JournalTrace.Entry
 
             fileReferenceIndetifiersSize = fileReference.Count;
 
-            //cu
+            // заполнение идентификаторов
             foreach (var id in parentFileReference)
             {
                 parentFileReferenceIdentifiers.Add(id, new ResolvableIdentifier(id));
             }
 
-            //dictionary
+            // разрешение идентификаторов в словаре
             foreach (var item in parentFileReferenceIdentifiers)
             {
                 item.Value.Resolve();
@@ -210,8 +210,8 @@ namespace JournalTrace.Entry
 
         }
 
-        //procura nos nodes do parametro um node com o nome do parametro
-        //serve caso "ContainsKey" retornar verdadeiro e precisamos pegar o node especifico
+        // ищет в узлах параметра узел с именем параметра
+        // используется когда "ContainsKey" возвращает true и нам нужно получить конкретный узел
         private TreeNode GetNodeOfName(TreeNode nodeToSearch, string name)
         {
             foreach (TreeNode node in nodeToSearch.Nodes)
@@ -224,8 +224,8 @@ namespace JournalTrace.Entry
             return null;
         }
 
-        //a arvore não tem uma referencia pro id de cada diretorio individual
-        //pra pegar as mudanças de um diretorio, procuramos pelo nome completo
+        // дерево не имеет ссылки на id каждой отдельной директории
+        // чтобы получить изменения директории, ищем по полному имени
         public List<long> GetChangesOfDirectory(string path)
         {
             USNCollection foundEntry = null;
@@ -250,13 +250,13 @@ namespace JournalTrace.Entry
         public TreeNode[] BakeTree()
         {
             List<TreeNode> rootDirNodes = new List<TreeNode>();
-            //criamos uma arvore pra cada diretorio, para uso mais conveniente
+            // создаем дерево для каждой директории для более удобного использования
             foreach (var usndir in USNDirectories)
             {
-                //separamos a string do caminho pelo determinante de diretorios (barra ao contrario) em um array
-                //cada index contem cada diretorio separadamente
-                //exemplo: "C:\Users\Computador\Downloads\" -> "C:", "Users", "Computador", "Downloads"
-                //isso serve pra checar se certo diretorio já existe na arvore
+                // разделяем строку пути по разделителю директорий (обратный слэш) в массив
+                // каждый индекс содержит каждую директорию отдельно
+                // пример: "C:\Users\Computador\Downloads\" -> "C:", "Users", "Computador", "Downloads"
+                // это нужно для проверки существует ли определенная директория в дереве
                 string parentFilePath = parentFileReferenceIdentifiers[usndir.Key].ResolvedID;
                 string[] individualDirs = parentFilePath.Split('\\');
                 if (individualDirs.Length == 2)
@@ -269,16 +269,16 @@ namespace JournalTrace.Entry
 
                 TreeNode lastNode = new TreeNode();
 
-                //pra cada diretorio separado, precisamos atualizar a arvore (caso necessario)
-                //caso o diretorio separado nao exista, criamos um node correspondente (se for o primeiro index, é um diretorio raiz na arvore)
-                //caso exista, checamos se o index do loop não é o ultimo
-                //ser o ultimo index indica que o diretorio contem mudanças e devemos destinguir ele dos demais
+                // для каждой отдельной директории нужно обновить дерево (при необходимости)
+                // если отдельная директория не существует, создаем соответствующий узел (если это первый индекс, это корневая директория в дереве)
+                // если существует, проверяем не является ли индекс цикла последним
+                // последний индекс указывает что директория содержит изменения и мы должны отличить её от остальных
                 for (int i = 0; i < individualDirs.Length; i++)
                 {
                     string individualDir = individualDirs[i];
                     if (i == 0)
                     {
-                        //primeiro index, precisa de logica diferente pra colocar uma raiz
+                        // первый индекс, требуется другая логика для размещения корня
                         bool found = false;
                         foreach (var rootDirNode in rootDirNodes)
                         {
@@ -304,7 +304,7 @@ namespace JournalTrace.Entry
                     }
                     else
                     {
-                        //não é o primeiro index
+                        // не первый индекс
                         if (!lastNode.Nodes.ContainsKey(individualDir))
                         {
                             TreeNode newNode = new TreeNode
@@ -323,7 +323,7 @@ namespace JournalTrace.Entry
                         }
                     }
 
-                    //diferenciamos o node caso o index for o ultimo
+                    // отличаем узел если индекс последний
                     if (i == individualDirs.Length - 1)
                     {
                         lastNode.ForeColor = ModernTheme.TextPrimary;
@@ -331,7 +331,7 @@ namespace JournalTrace.Entry
                 }
             }
 
-            //ordenação por string pro disco sempre aparecer em cima
+            // сортировка по строке чтобы диск всегда появлялся сверху
             rootDirNodes.Sort((x, y) => y.Text.CompareTo(x.Text));
 
             return rootDirNodes.ToArray();

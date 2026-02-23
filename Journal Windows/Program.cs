@@ -8,7 +8,7 @@ namespace JournalTrace
     internal static class Program
     {
         /// <summary>
-        /// Ponto de entrada principal para o aplicativo.
+        /// Главная точка входа для приложения.
         /// </summary>
         [STAThread]
         private static void Main()
