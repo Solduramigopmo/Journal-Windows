@@ -1,206 +1,118 @@
-# HamburgerMenu (Holy-Nub)
+# Journal Windows
 
-Open-source desktop utility hub на `Avalonia` для Windows с модульной структурой:
+`Journal Windows` — настольное WinForms-приложение для анализа изменений файловой системы Windows через **NTFS USN Journal** (`$UsnJrnl`).
 
-- запуск внешних утилит из папки `Apps`
-- просмотр Steam-аккаунтов и базовой информации
-- аналитический модуль для сканирования системы
-- защищенный режим доставки/запуска через `Loader` + зашифрованный пакет
+Программа помогает быстро увидеть события:
 
-Проект распространяется по лицензии **MIT**.
+- создание/удаление файлов
+- переименование
+- изменение данных и атрибутов
+- изменение структуры каталогов
 
-## Возможности
+И подходит для базового форензик-анализа, аудита активности и технической диагностики.
 
-- Меню `Apps` для запуска встроенных инструментов:
-- `LastActivityView`
-- [`Journal Windows`](https://github.com/Solduramigopmo/Journal-Windows)
-- `System Informer`
-- `RegistryAnalyzer`
-- `Everything`
-- `USBDeview`
+## Что делает программа
 
-- Модуль `Customer`:
-- поиск Steam-аккаунтов в системе
-- отображение SteamID2 и SteamID64
-- запрос VAC-статуса
-- переход в профиль Steam
+- Читает USN Journal выбранного NTFS-тома через Win32 API.
+- Преобразует сырые USN-записи в удобные сущности с датой/причиной/путем.
+- Показывает результаты в 2 режимах:
+- `Data Grid` (таблица, поиск, контекстные действия)
+- `Directory Tree` (дерево каталогов + изменения по выбранной папке)
+- Открывает подробную карточку конкретной записи.
+- Позволяет открыть каталог записи в `Explorer`.
+- Поддерживает локализацию интерфейса (`ru`/`en`).
 
-- Модуль `Analytics`:
-- быстрое и полное сканирование
-- проверка сигнатур/метаданных/паттернов файлов
-- проверка DNS cache
-- проверка Steam userdata
-- экспорт отчета в текстовый файл
+## Как это работает внутри
 
-- Модуль `Settings`:
-- информация о Windows
-- дата установки ОС
-- детект VM
-- информация о GPU
-- быстрые переходы в системные настройки
+Основной пайплайн сканирования:
 
-- Защищенный запуск:
-- `HamburgerMenu.Loader` загружает `app.enc` и `version.json`
-- расшифровывает пакет во временную папку
-- запускает основной exe
+1. Выбор диска (только `NTFS` и `IsReady`).
+2. Получение handle тома.
+3. Чтение текущего состояния журнала (`FSCTL_QUERY_USN_JOURNAL`).
+4. Чтение записей (`FSCTL_READ_USN_JOURNAL`) по маске причин.
+5. Разрешение `FileReference/ParentFileReference` в реальные пути.
+6. Сбор индексов и построение данных для UI.
 
-## Analytics: как работает сканирование
+Используемые причины USN включают: `FILE_CREATE`, `FILE_DELETE`, `RENAME_OLD_NAME`, `RENAME_NEW_NAME`, `DATA_OVERWRITE`, `SECURITY_CHANGE`, `REPARSE_POINT_CHANGE`, `CLOSE` и другие.
 
-Ниже описана фактическая логика из кода, которая используется в модуле `Analytics` и объясняет, почему скан обычно быстрый.
+## Интерфейс
 
-Основные методы:
+Главное меню:
 
-- `FullScanAsync` (`SubmenuAnalytics.axaml.cs`)
-- запускает 3 ветки параллельно: `CheckDnsCacheAsync`, `CheckSteamUserdataAsync` и сканирование дисков
-- для каждого доступного HDD/USB добавляет отдельную задачу `ScanDriveAsync`
+- `Drive -> Select` — выбор NTFS-тома.
+- `Drive -> Scan` — запуск чтения журнала.
+- `Layout -> Directory Tree / Data Grid` — выбор визуализации данных после скана.
+- `Language` — переключение языка интерфейса.
+- `Information` — окно с информацией о проекте/авторе.
 
-- `QuickScanAsync` (`SubmenuAnalytics.axaml.cs`)
-- сканирует только системный диск через `ScanDriveAsync`
-- это основной сценарий, который обычно укладывается примерно в `2–5 секунд` на обычной системе
+Контекстное меню записи:
 
-- `ScanDriveAsync` (`SubmenuAnalytics.axaml.cs`)
-- для HDD сканирует целевые каталоги, а не весь диск подряд:
-- `Downloads`, `Desktop`, `Documents`, `AppData`, `LocalAppData`, `Temp`, `Windows\Prefetch`, `Games`, `Program Files`, `Program Files (x86)` и часть корня диска
-- для USB-носителей может сканировать весь том
+- копировать значение ячейки
+- открыть `Entry info`
+- открыть директорию записи в Проводнике
 
-- `ScanPathAsync` (`SubmenuAnalytics.axaml.cs`)
-- делает дедупликацию путей через `_scannedPaths`, чтобы один и тот же путь не обрабатывался повторно
-- добавляет результаты без дублей по `FilePath`
+## Требования
 
-- `ScanDirectoryAsync` (`CheatScanner.cs`)
-- перечисляет файлы безопасно через `EnumerateFilesSafe`
-- запускает проверку файлов в `Parallel.ForEach` с `MaxDegreeOfParallelism = Environment.ProcessorCount`
-- в UI попадают только срабатывания с `Confidence >= 70`
+- Windows (приложение использует Win32 API и NTFS Journal)
+- NTFS-том для сканирования
+- Права администратора (в `app.manifest` выставлено `requireAdministrator`)
+- .NET Framework 4.8 (целевая платформа проекта)
 
-- `EnumerateFilesSafe` (`CheatScanner.cs`)
-- агрессивно пропускает тяжелые/нерелевантные папки (`SkipFolders`)
-- пропускает большой список расширений (`SkipExtensions`) для кода, медиа, документов, архивов и т.д.
-- за счет этого объем реально проверяемых файлов сильно уменьшается
+## Сборка и запуск
 
-- `ScanFile` (`CheatScanner.cs`)
-- использует быстрые эвристики:
-- проверки по имени, шаблонам, prefetch (`.pf`), AHK (`.ahk`)
-- проверки цифровой подписи и PE-метаданных для `.exe/.dll`
-- точечные проверки известных размеров/описаний
-- для текстовых конфигов чтение ограничено `50 KB` (`TryReadFile`)
+### Рекомендуемый способ (Visual Studio)
 
-- `CheckDnsCacheAsync` (`CheatScanner.cs`)
-- запускает `ipconfig /displaydns` и ищет совпадения по списку доменов
+1. Откройте `Journal Windows.sln` в Visual Studio 2022.
+2. Убедитесь, что установлен workload **.NET desktop development**.
+3. Выберите `Debug` или `Release`.
+4. Соберите и запустите проект `Journal Windows`.
 
-- `CheckSteamUserdataAsync` (`CheatScanner.cs`)
-- проверяет `Steam\userdata` на подозрительные конфиги/имена
+### Через командную строку
 
-Почему это быстро:
+Проект старого формата (`.csproj` для .NET Framework 4.8).  
+Для корректной сборки используйте `MSBuild` из Visual Studio Build Tools.
 
-- нет глубокого бинарного анализа или полного чтения всех файлов
-- большая фильтрация по папкам/расширениям до начала тяжелых проверок
-- параллельная обработка по числу ядер CPU
-- ограничение на размер читаемых текстовых файлов
-- ранний выход при совпадении высокоприоритетных эвристик
-
-Примечание по времени:
-
-- `Quick Scan`: обычно `~2–5 секунд` на SSD и типовой системе
-- `Full Scan`: может быть заметно дольше в зависимости от количества файлов, подключенных дисков и USB-носителей
-
-## Стек
-
-- `.NET 8`
-- `Avalonia 11`
-- C#
-- WMI / Registry API (Windows)
-
-## Структура репозитория
-
-- `HamburgerMenu.Avalonia` — основное UI-приложение
-- `HamburgerMenu.Loader` — защищенный загрузчик
-- `HamburgerMenu.Encryptor` — упаковка и шифрование сборки (`app.enc`)
-- `HamburgerMenu.Shared` — общая логика (crypto, сервисы, лицензии)
-- `Apps` — внешние утилиты, запускаемые из интерфейса
-- `build-and-encrypt.bat` — сценарий сборки + упаковки для доставки
-- `LICENSES.md` — внутренняя документация по лицензиям/кодам доступа
-
-## Системные требования
-
-- Windows 10/11 x64
-- .NET SDK 8.0 (для сборки из исходников)
-
-## Быстрый старт (для разработчика)
+Пример:
 
 ```powershell
-cd D:\humburger-main\humburger-main
-dotnet restore
-dotnet build HamburgerMenu.Avalonia.sln -c Debug
-dotnet run --project .\HamburgerMenu.Avalonia\HamburgerMenu.Avalonia.csproj
+msbuild "Journal Windows.sln" /p:Configuration=Release
 ```
 
-## Сборка Release
+Примечание: обычный `dotnet build` на новых SDK может выдавать ошибки ресурсов (`MSB3822/MSB3823`) для этого типа проекта.
 
-```powershell
-dotnet build HamburgerMenu.Avalonia.sln -c Release
-```
+## Структура проекта
 
-Выходные файлы:
+- `Journal Windows/Program.cs` — точка входа
+- `Journal Windows/View/FormMain.cs` — основная форма и меню
+- `Journal Windows/View/FormDrive.cs` — выбор тома
+- `Journal Windows/View/FormEntryInfo.cs` — детальная информация по записи
+- `Journal Windows/View/Layout/GridLayout.cs` — табличный режим
+- `Journal Windows/View/Layout/TreeLayout.cs` — режим дерева директорий
+- `Journal Windows/Entry/EntryManager.cs` — оркестратор сканирования и индексов
+- `Journal Windows/Entry/USNEntry.cs` — модель записи журнала
+- `Journal Windows/Entry/ResolvableIdentifier.cs` — разрешение ID в путь
+- `Journal Windows/Native/NtfsUsnJournal.cs` — работа с USN Journal
+- `Journal Windows/Native/Win32Api.cs` — P/Invoke/константы/структуры
+- `Journal Windows/Native/FileID.cs` — получение пути по File ID
+- `Journal Windows/Language/*` — система локализации
 
-- `HamburgerMenu.Avalonia\bin\Release\net8.0\`
-- `HamburgerMenu.Loader\bin\Release\net8.0\`
-- `HamburgerMenu.Encryptor\bin\Release\net8.0\`
+## Ограничения
 
-## Защищенный режим поставки
+- Работает только с NTFS-дисками.
+- История ограничена глубиной USN Journal (старые записи могут быть вытеснены).
+- Для удаленных объектов путь может не разрешиться (останется ID).
+- Пункт меню `File -> Export` присутствует в UI, но логика экспорта в текущем коде не реализована.
 
-Цепочка:
+## Типовые сценарии использования
 
-1. Собирается основной проект.
-2. Содержимое пакуется в zip.
-3. Zip шифруется (AES/PBKDF2) в `app.enc`.
-4. Генерируется `version.json` с метаданными.
-5. `Loader` скачивает и запускает пакет.
+- Проверка, какие файлы создавались/удалялись за период.
+- Анализ подозрительной активности в папках пользователя.
+- Быстрый просмотр изменений в конкретной директории через `Directory Tree`.
+- Ручное расследование события с переходом в каталог и детальной карточкой записи.
 
-Запуск батника упаковки:
+## Локализация
 
-```powershell
-.\build-and-encrypt.bat
-```
+Поддерживаются:
 
-Результат:
-
-- `Encrypted\app.enc`
-- `Encrypted\version.json`
-
-## Управление кодами доступа
-
-Проверка кодов доступа реализована в:
-
-- `HamburgerMenu.Shared\Services\LicenseManager.cs`
-
-Формат записи лицензии:
-
-```text
-email@example.com-YYYYMMDD-XXXXXXXX
-```
-
-- `email@example.com` — идентификатор пользователя
-- `YYYYMMDD` — дата окончания
-- `XXXXXXXX` — код доступа из 8 символов
-
-## Известные особенности
-
-- Проект ориентирован на Windows (часть API платформозависима).
-- В `Release` включена проверка корректности запуска через loader.
-- `generate-license.ps1` в текущем состоянии может требовать доработки под ваш процесс генерации ключей.
-
-## Безопасность и дисклеймер
-
-- Проект предоставляется как есть, без гарантий.
-- Используйте встроенные утилиты только в рамках закона и правил вашей организации.
-- Перед использованием в production рекомендуется провести внутренний аудит кода и зависимостей.
-
-## Contribution
-
-Pull Request'ы и Issue приветствуются.
-
-Рекомендуемый процесс:
-
-1. Создать feature-branch.
-2. Внести изменения и проверить сборку `Debug/Release`.
-3. Добавить описание изменений в PR.
+- Русский (`ru`)
+- Английский (`en`)
